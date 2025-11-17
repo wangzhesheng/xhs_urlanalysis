@@ -1,7 +1,7 @@
 import json
 import requests
 from flask import Flask
-
+# 依赖就这三个，python版本3.11
 app = Flask(__name__)
 @app.route('/api/v1/<user_str>', methods=['GET'])
 # 输入信息用&连接
