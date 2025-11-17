@@ -1,0 +1,47 @@
+import json
+import requests
+from flask import Flask
+
+app = Flask(__name__)
+@app.route('/api/v1/<user_str>', methods=['GET'])
+# 输入信息用&连接
+def gggg(user_str):
+    import base64
+    encoded_str = user_str
+    decoded_bytes = base64.b64decode(encoded_str)
+    original_str = decoded_bytes.decode("utf-8")
+    headers={
+    }
+    url=original_str
+    res=requests.get(url,headers=headers)
+    str0=res.text
+    try:
+        list0 = str0.split('__INITIAL_STATE__=')
+        str1 = list0[1].replace('</script></body></html>', '').replace("undefined", "0").replace("\n", '')
+        dict1 = json.loads(str1)
+        dict2 = dict1["note"]
+        dict3 = dict2["noteDetailMap"]
+        for key in dict3.keys():
+            dict4 = dict3[key]
+        dict5 = dict4['note']
+        return_dict={}
+        return_dict['url'] = str(url)
+        return_dict['picture'] = str(dict5['imageList'])
+        return_dict['title'] = str(dict5['title'])
+        return_dict['desc'] = str(dict5['desc'])
+        return_dict['user'] = str(dict5['user']['nickname'])
+        return_dict['tag'] = str(dict5['tagList'])
+        return_dict['liked'] = str(dict5['interactInfo']['likedCount'])
+        return_dict['collected'] = str(dict5['interactInfo']['collectedCount'])
+        return_dict['comment'] = str(dict5['interactInfo']['commentCount'])
+        return_dict['share'] = str(dict5['interactInfo']['shareCount'])
+        # print(return_dict)
+    except:
+        return_dict={}
+        return_dict['url'] = str(url)
+        return_dict['title'] = "error"
+    return json.dumps(return_dict)
+
+# 运行Flask应用
+if __name__ == '__main__':
+    app.run(port=5000)
